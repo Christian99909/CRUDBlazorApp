@@ -65,5 +65,43 @@ namespace CRUD.Backend.Controllers
         
         }
 
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAsync(int id, Producto producto)
+        {
+            if (id != producto.Id)
+            {
+                return BadRequest();
+            }
+            _context.Entry(producto).State = EntityState.Modified;
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(producto);
+            }
+            catch (DbUpdateConcurrencyException e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, e.InnerException!.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,e.Message);
+            }
+
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var producto = await _context.Productos.FindAsync(id);
+            if (producto == null)
+            {
+                return NotFound();
+            }
+            _context.Productos.Remove(producto);
+            await _context.SaveChangesAsync();
+            return Ok(producto);
+        }
+
     }
 }

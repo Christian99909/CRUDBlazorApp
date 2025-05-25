@@ -15,16 +15,31 @@ namespace CRUD.Backend
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<DataContext>(x=>x.UseSqlServer("name=LocalConnection"));
+            builder.Services.AddCors( options =>
+            {
+                options.AddPolicy("AllowSpecificOrigins", policy =>
+                {
+                    policy.WithOrigins("https://localhost:7117")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });   
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+
                 app.MapOpenApi();
+                app.UseSwaggerUI();
+                app.UseSwagger();
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowSpecificOrigins");
 
             app.UseAuthorization();
 
