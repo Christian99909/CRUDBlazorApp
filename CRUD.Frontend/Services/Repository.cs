@@ -13,10 +13,10 @@ namespace CRUD.Frontend.Services
             _httpClient = httpClient;
         }
 
-        private JsonSerializerOptions _jsonDefaultOptions => new JsonSerializerOptions(){PropertyNameCaseInsensitive = true};
+        private JsonSerializerOptions _jsonDefaultOptions => new JsonSerializerOptions(){PropertyNameCaseInsensitive = true,};
 
 
-        public async Task<object> DeleteAsync<T>(string url, int id)
+        public async Task<object> DeleteAsync(string url)
         {
             var response = await _httpClient.DeleteAsync(url);
             response.EnsureSuccessStatusCode();
@@ -55,7 +55,7 @@ namespace CRUD.Frontend.Services
         public async Task<object> PutAsync<T>(string url, T entity)
         {
             var content = new StringContent(JsonSerializer.Serialize(entity), Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(url, content);
+            var response = await _httpClient.PutAsync(url, content);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
